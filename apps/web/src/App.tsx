@@ -1,15 +1,13 @@
-import { useState, type ChangeEvent } from "react"
+import React, { useEffect, useState, type ChangeEvent } from "react"
+import axios from "axios"
 import { Button } from "@workspace/ui/components/button"
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSeparator,
   FieldSet,
 } from "@workspace/ui/components/field"
-
 import {
   Select,
   SelectContent,
@@ -18,8 +16,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@workspace/ui/components/sheet"
 import { Input } from "@workspace/ui/components/input"
+import { ProductsTable } from "./components/ProductsTable"
 
 type ProductWithStock = {
   sku: string
@@ -29,194 +36,244 @@ type ProductWithStock = {
   qty_received: number | string
   qty_remaining: number | string
   unit_cost: number | string
+}
 
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+})
+
+interface CreateProductProps {
+  onProductAdded: () => Promise<void>;
 }
 
 export function App() {
-    return (
+  const [products, setProducts] = useState([])
+
+  const getProducts = async () => {
+    try {
+      const response = await api.get("/api/dashboard")
+      setProducts(response.data.data)
+    } catch(err: any) {
+      console.error('Failed to fetch products', err)
+    }
+  }
+
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  console.log(products)
+
+  return (
     <div className="App p-6">
-      <FieldDemo />
+      <CreateProduct onProductAdded={getProducts} />
+      <div className="my-4"></div>
+      <ProductsTable products={products} />
     </div>
   )
 }
 
-export function FieldDemo() {
+export function CreateProduct({ onProductAdded }: CreateProductProps) {
   const [stock, setStock] = useState<ProductWithStock>({
-    sku: '',
-    name: '',
-    category: '',
-    price: '',
-    qty_received: '',
-    qty_remaining: '',
-    unit_cost: ''
+    sku: "",
+    name: "",
+    category: "",
+    price: "",
+    qty_received: "",
+    qty_remaining: "",
+    unit_cost: "",
   })
+  const [open, setOpen] = useState(false)
 
-  const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
-    //console.log(e.target.id)
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setStock({
-      ...stock, 
-      [e.target.id]: e.target.value
+      ...stock,
+      [e.target.id]: e.target.value,
     })
   }
 
-  const handleSubmit = (e:SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(stock)
+    const data = Object.fromEntries(new FormData(e.currentTarget))
+    
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/productWithStock",
+        data
+      )
+
+      if(response.status === 201) {
+        await onProductAdded() 
+        
+        setOpen(false) 
+        
+        setStock({
+          sku: "",
+          name: "",
+          category: "",
+          price: "",
+          qty_received: "",
+          qty_remaining: "",
+          unit_cost: "",
+        })
+      }
+    } catch (err) {
+      console.error("Failed to submit new product:", err)
+    }
   }
 
   return (
-    <div className="w-full max-w-md">
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <FieldGroup>
-          <FieldSet>
-            <FieldLegend>create new stock</FieldLegend>
-            <FieldDescription>
-              All transactions are secure and encrypted
-            </FieldDescription>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button>Add new stock</Button>
+      </SheetTrigger>
+
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Add new stock</SheetTitle>
+          <SheetDescription>Enter details for a new product</SheetDescription>
+        </SheetHeader>
+
+        <form onSubmit={handleSubmit} className="p-4">
+          <FieldGroup>
+            <FieldSet>
+              <FieldGroup>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Field>
+                    <FieldLabel htmlFor="sku">Sku</FieldLabel>
+                    <Input
+                      id="sku"
+                      name="sku"
+                      placeholder="ORAIMO-TYPEC-CBL"
+                      value={stock.sku}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="iphoneX case"
+                      value={stock.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Field>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-2">
+                  <FieldSelect />
+
+                  <Field>
+                    <FieldLabel htmlFor="price">Price</FieldLabel>
+                    <Input
+                      id="price"
+                      name="price"
+                      placeholder="K100.00"
+                      value={stock.price}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Field>
+                </div>
+              </FieldGroup>
+            </FieldSet>
+
+            <FieldSeparator />
 
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="sku">
-                  Sku
+                <FieldLabel htmlFor="qty_received">
+                  Quantity received
                 </FieldLabel>
                 <Input
-                  id="sku"
-                  placeholder="ORAIMO-TYPEC-CBL"
-                  value={stock.sku}
-                  onChange={(e) => handleChange(e)}
+                  type="number"
+                  id="qty_received"
+                  name="qty_received"
+                  placeholder="200"
+                  value={stock.qty_received}
+                  onChange={handleChange}
                   required
                 />
-                <FieldDescription>
-                  stock keeping unit
-                </FieldDescription>
               </Field>
               <Field>
-                <FieldLabel htmlFor="name">
-                  Name
+                <FieldLabel htmlFor="qty_remaining">
+                  Quantity remaining
                 </FieldLabel>
                 <Input
-                  id="name"
-                  placeholder="iphoneX case"
-                  value={stock.name}
-                  onChange={(e) => handleChange(e)}
+                  type="number"
+                  id="qty_remaining"
+                  name="qty_remaining"
+                  value={stock.qty_remaining}
+                  onChange={handleChange}
+                  placeholder="200"
                   required
-                /> 
-              </Field> 
-              <FieldSelect />
-
+                />
+              </Field>
               <Field>
-                <FieldLabel htmlFor="price">
-                  Price
-                </FieldLabel>
+                <FieldLabel htmlFor="unit_cost">Unit cost</FieldLabel>
                 <Input
-                  id="price"
-                  placeholder="K100.00"
-                  value={stock.price}
-                  onChange={(e) => handleChange(e)}
+                  type="number"
+                  id="unit_cost"
+                  name="unit_cost"
+                  placeholder="K70"
+                  value={stock.unit_cost}
+                  onChange={handleChange}
                   required
-                /> 
-                <FieldDescription>
-                  what the customer pays
-                </FieldDescription>
-              </Field> 
+                />
+              </Field>
             </FieldGroup>
-          </FieldSet>
 
-          <FieldSeparator />
-
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="qty_received">
-                Quantity received
-              </FieldLabel>
-              <Input
-                type="number"
-                id="qty_received"
-                placeholder="200"
-                value={stock.qty_received}
-                onChange={(e) => handleChange(e)}
-                required
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="qty_remaining">
-                Quantity remaining
-              </FieldLabel>
-              <Input
-                type="number"
-                id="qty_remaining"
-                value={stock.qty_remaining}
-                onChange={(e) => handleChange(e)}
-                placeholder="200"
-                required
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="unit_cost">
-                Unit cost
-              </FieldLabel>
-              <Input
-                type="number"
-                id="unit_cost"
-                placeholder="K70"
-                value={stock.unit_cost}
-                onChange={(e) => handleChange(e)}
-                required
-              />
-              <FieldDescription>
-                what you paid to the supplier
-              </FieldDescription>
-            </Field>
+            <SheetFooter>
+              <Field orientation="horizontal">
+                <Button type="submit">Create stock</Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </Field>
+            </SheetFooter>
           </FieldGroup>
-
-          <Field orientation="horizontal">
-            <Button type="submit">Create stock</Button>
-            <Button 
-              variant="outline" 
-              type="button"
-            >
-              Cancel
-            </Button>
-          </Field>
-        </FieldGroup>
-      </form>
-    </div>
+        </form>
+      </SheetContent>
+    </Sheet>
   )
 }
 
 
-const items = [
-  { label: "Choose product category", value: null },
-  { label: "Cabel", value: "cabel" },
-  { label: "Pouch", value: "pouch" },
-  { label: "Charger", value: "charger" },
-  { label: "Earpods", value: "earpods" },
-  { label: "Headsets", value: "cabel heasets" },
-  { label: "Mouse", value: "mouse" },
-  { label: "Battery", value: "battery" },
-]
-
 function FieldSelect() {
+  const items = [
+    { label: "Choose product category", value: null },
+    { label: "Cable", value: "cable" },
+    { label: "Pouch", value: "pouch" },
+    { label: "Charger", value: "charger" },
+    { label: "Earpods", value: "earpods" },
+    { label: "Headsets", value: "cable headsets" },
+    { label: "Mouse", value: "mouse" },
+    { label: "Battery", value: "battery" },
+  ]
   return (
     <Field className="w-full">
       <FieldLabel>Category</FieldLabel>
-      <Select items={items}>
-        <SelectTrigger>
-          <SelectValue />
+      <Select name="category">
+        <SelectTrigger id="category">
+          <SelectValue placeholder="Choose product category" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             {items.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
+              <SelectItem key={item.value ?? "empty"} value={item.value ?? ""}>
                 {item.label}
               </SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>
       </Select>
-      <FieldDescription>
-        Select product category
-      </FieldDescription>
     </Field>
   )
 }
