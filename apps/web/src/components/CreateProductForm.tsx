@@ -39,9 +39,8 @@ type ProductWithStock = {
 }
 
 interface CreateProductProps {
-  onProductAdded: () => Promise<void>;
+  onProductAdded: () => Promise<void>
 }
-
 
 export function CreateProductForm({ onProductAdded }: CreateProductProps) {
   const [stock, setStock] = useState<ProductWithStock>({
@@ -65,18 +64,18 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const data = Object.fromEntries(new FormData(e.currentTarget))
-    
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/productWithStock",
         data
       )
 
-      if(response.status === 201) {
-        await onProductAdded() 
-        
-        setOpen(false) 
-        
+      if (response.status === 201) {
+        await onProductAdded()
+
+        setOpen(false)
+
         setStock({
           sku: "",
           name: "",
@@ -215,7 +214,6 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
   )
 }
 
-
 function FieldSelect() {
   const items = [
     { label: "Choose product category", value: null },
@@ -247,4 +245,3 @@ function FieldSelect() {
     </Field>
   )
 }
-

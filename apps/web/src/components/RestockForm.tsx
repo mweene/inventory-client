@@ -6,17 +6,8 @@ import {
   Field,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
   FieldSet,
 } from "@workspace/ui/components/field"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
 import {
   Sheet,
   SheetContent,
@@ -27,6 +18,7 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet"
 import { Input } from "@workspace/ui/components/input"
+import { FieldSelect } from "./FieldSelect"
 
 type ProductWithStock = {
   sku: string
@@ -39,22 +31,44 @@ type ProductWithStock = {
 }
 
 interface CreateProductProps {
-  onProductAdded: () => Promise<void>;
+  onProductAdded: () => Promise<void>
 }
 
-
-export function RestockForm() {
+export function RestockForm({ productSKUs }) {
   const [open, setOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string|null>(null)
   const [data, setData] = useState({
     sku: "",
     unit_cost: "",
-    qty_received: ""
+    qty_received: "",
   })
 
-  const handleSubmit = async (e:SubmitEvent<HTMLFormElement>) => {
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleValueChange = (value) => {
+    setData({
+      ...data,
+      sku: value
+    })
+  }
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const data = Object.fromEntries(new FormData(e.currentTarget))
-    console.log('submitting data:', data)
+    try {
+      await axios.post('http://localhost:3000/api/inventory/restock', data)
+      setOpen(false)
+    } catch(err:any) {
+      console.error(err)
+      setError('something is wrong')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -73,28 +87,35 @@ export function RestockForm() {
           <FieldGroup>
             <FieldSet>
               <FieldGroup>
-                  <FieldSelect />
-                  
-                  <Field>
-                    <FieldLabel htmlFor="sku">Unit cost</FieldLabel>
-                    <Input
-                      id="unit_cost"
-                      name="unit_cost"
-                      placeholder="K00.00"
-                      type="number"
-                      required
-                    />
-                  </Field>
-                  <Field>
-                    <FieldLabel htmlFor="price">Qty received</FieldLabel>
-                    <Input
-                      id="qty_received"
-                      name="qty_received"
-                      placeholder="100"
-                      type="number"
-                      required
-                    />
-                  </Field>
+                <FieldSelect 
+                  onValueChange={handleValueChange}
+                  skus={productSKUs} 
+                />
+
+                <Field>
+                  <FieldLabel htmlFor="sku">Unit cost</FieldLabel>
+                  <Input
+                    id="unit_cost"
+                    name="unit_cost"
+                    placeholder="K00.00"
+                    type="number"
+                    value={data.unit_cost}
+                    onChange={handleChange}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="price">Qty received</FieldLabel>
+                  <Input
+                    id="qty_received"
+                    name="qty_received"
+                    placeholder="100"
+                    type="number"
+                    value={data.qty_received}
+                    onChange={handleChange}
+                    required
+                  />
+                </Field>
               </FieldGroup>
             </FieldSet>
 
@@ -116,37 +137,3 @@ export function RestockForm() {
     </Sheet>
   )
 }
-
-
-function FieldSelect() {
-  const items = [
-    { label: "Choose product sku", value: null },
-    { label: "Cable", value: "cable" },
-    { label: "Pouch", value: "pouch" },
-    { label: "Charger", value: "charger" },
-    { label: "Earpods", value: "earpods" },
-    { label: "Headsets", value: "cable headsets" },
-    { label: "Mouse", value: "mouse" },
-    { label: "Battery", value: "battery" },
-  ]
-  return (
-    <Field className="w-full">
-      <FieldLabel>Product sku</FieldLabel>
-      <Select name="sku">
-        <SelectTrigger id="sku">
-          <SelectValue placeholder="Choose product sku" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {items.map((item) => (
-              <SelectItem key={item.value ?? "empty"} value={item.value ?? ""}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </Field>
-  )
-}
-
