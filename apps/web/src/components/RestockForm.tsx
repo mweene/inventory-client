@@ -34,7 +34,7 @@ interface CreateProductProps {
   onProductAdded: () => Promise<void>
 }
 
-export function RestockForm({ productSKUs }) {
+export function RestockForm({ productSKUs, onRestock }) {
   const [open, setOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string|null>(null)
@@ -51,7 +51,7 @@ export function RestockForm({ productSKUs }) {
     })
   }
 
-  const handleValueChange = (value) => {
+  const handleValueChange = (value:string) => {
     setData({
       ...data,
       sku: value
@@ -63,6 +63,14 @@ export function RestockForm({ productSKUs }) {
     try {
       await axios.post('http://localhost:3000/api/inventory/restock', data)
       setOpen(false)
+
+      setData({
+        sku: "",
+        unit_cost: "",
+        qty_received: ""
+      })
+
+      await onRestock()
     } catch(err:any) {
       console.error(err)
       setError('something is wrong')

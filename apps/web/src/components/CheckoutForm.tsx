@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { Field, FieldLabel, FieldGroup } from "@workspace/ui/components/field"
 import {
   Table,
@@ -22,9 +22,16 @@ import {
   DialogFooter,
 } from "@workspace/ui/components/dialog"
 import { FieldSelect } from "./FieldSelect"
+import { X } from "lucide-react"
 import axios from "axios"
 
-export function CheckoutForm({ productSKUs }) {
+export function CheckoutForm({ 
+  productSKUs, 
+  onCheckout 
+}: {
+  productSKUs: string[]
+  onCheckout: () => void | Promise<void>
+}) {
   const [isOpen, setIsOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,14 +47,14 @@ export function CheckoutForm({ productSKUs }) {
     if(!open) setError(null)
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent) => {
     setProduct({
       ...product,
       [e.target.name]: e.target.value,
     })
   }
 
-  const handleSubmit = (e) => {
+  const onAddItem = (e:React.FormEvent) => {
     e.preventDefault()
     if (Object.values(product).length < 1) return
 
@@ -58,7 +65,12 @@ export function CheckoutForm({ productSKUs }) {
     })
   }
 
-  const onValueChange = (value) => {
+  const onDeleteItem = (sku:string) => {
+    const result = productsList.filter(p => p.sku !== sku)
+    setProductsList(result)
+  }
+
+  const onValueChange = (value:string) => {
     setProduct({
       ...product,
       sku: value,
@@ -74,6 +86,8 @@ export function CheckoutForm({ productSKUs }) {
       })
       setProductsList([])
       setIsOpen(false)
+
+      await onCheckout()
     } catch (err: any) {
       const message = axios.isAxiosError(err)
         ? err.response?.data?.message ?? err.message
@@ -93,7 +107,7 @@ export function CheckoutForm({ productSKUs }) {
             <DialogTitle>Checkout (sales) Form</DialogTitle>
             <DialogDescription>Record sales using this form</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={onAddItem}>
             <FieldGroup className="gap-4">
               <Field>
                 <FieldSelect skus={productSKUs} onValueChange={onValueChange} />
@@ -106,7 +120,7 @@ export function CheckoutForm({ productSKUs }) {
                   name="quantity"
                   type="number"
                   min={1}
-                  placeholder="2"
+                  placeholder="1"
                   value={product.quantity}
                   onChange={handleChange}
                   required
@@ -115,14 +129,15 @@ export function CheckoutForm({ productSKUs }) {
             </FieldGroup>
 
             <FieldGroup>
-              <Button type="submit" className="mt-4">
+              <Button type="submit"  className="mt-4">
                 Add item
               </Button>
               {error && <p className="text-sm text-destructive">{error}</p>}
             </FieldGroup>
           </form>
 
-          {productsList.length > 0 && <CheckoutTable data={productsList} />}
+          {productsList.length > 0 && <CheckoutTable data={productsList} onDeleteItem={onDeleteItem} />}
+
           <DialogFooter>
             <Button type="submit" onClick={handleCheckout} disabled={submitting}>
               {submitting ? "Saving..." : "Complete checkout"}
@@ -135,7 +150,8 @@ export function CheckoutForm({ productSKUs }) {
   )
 }
 
-const CheckoutTable = ({ data }) => {
+const CheckoutTable = ({ data, onDeleteItem }) => {
+  
   return (
     <div>
       <Table className="mt-6 border">
@@ -150,13 +166,17 @@ const CheckoutTable = ({ data }) => {
         </TableHeader>
 
         <TableBody>
-          {data.map((item) => (
-            <TableRow key={item.id} className="">
+          {data.map((item, index) => ( //TODO: Change to actual item id
+            <TableRow key={index} className="">
               <TableCell>{item.sku}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>{item.price}</TableCell>
-              <TableCell>...</TableCell>
+              <TableCell>
+                <Button size="icon-xs" onClick={() => onDeleteItem(item.sku)}>
+                  <X />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

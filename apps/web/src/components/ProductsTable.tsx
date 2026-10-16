@@ -6,10 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table"
+import { Button } from "@workspace/ui/components/button"
+import { ChevronUp, ChevronDown } from "lucide-react"
 
 export function ProductsTable({ products }) {
   return (
-    <>
+    <div>
       <Table className="border">
         <TableHeader>
           <TableRow className="uppercase">
@@ -40,6 +42,14 @@ export function ProductsTable({ products }) {
           ))}
         </TableBody>
       </Table>
-    </>
+
+      <div className="flex place-items-center mt-4 place-content-between">
+        <div className="flex gap-2">
+          <Button variant="outline"><ChevronUp /></Button>
+          <Button variant="outline"><ChevronDown /></Button>
+        </div>
+        <p>Page 1 of 10</p>
+      </div>
+    </div>
   )
 }
