@@ -1,5 +1,6 @@
 import React, { useState, type ChangeEvent } from "react"
 import axios from "axios"
+import { ChevronDown, Plus } from "lucide-react"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -95,7 +96,11 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
-        <Button>Add new stock</Button>
+        <Button>
+          <Plus />
+          Add new stock
+          <ChevronDown />
+        </Button>
       </SheetTrigger>
 
       <SheetContent>
@@ -143,6 +148,7 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
                       name="price"
                       placeholder="K100.00"
                       value={stock.price}
+                      type="number"
                       onChange={handleChange}
                       required
                     />

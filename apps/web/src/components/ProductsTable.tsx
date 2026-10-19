@@ -6,15 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table"
-import { Button } from "@workspace/ui/components/button"
-import { ChevronUp, ChevronDown } from "lucide-react"
 
 export function ProductsTable({ products }) {
   return (
     <div>
       <Table className="border">
-        <TableHeader>
-          <TableRow className="uppercase">
+        <TableHeader role="rowgroup" className="block [scrollbar-gutter-stable] overflow-y-hidden [&_tr]:table [&_tr]:w-full [&_tr]:table-fixed">
+          <TableRow role="row" className="uppercase">
             <TableHead>id</TableHead>
             <TableHead>sku</TableHead>
             <TableHead>name</TableHead>
@@ -26,9 +24,9 @@ export function ProductsTable({ products }) {
             <TableHead>created at</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody role="rowgroup" className="block max-h-[470px] overflow-y-auto [scrollbar-gutter-stable] [&_tr]:table [&_tr]:w-full [&_tr]:table-fixed">
           {products.map((product) => (
-            <TableRow key={product.id}>
+            <TableRow role="row" key={product.id}>
               <TableCell>{product.id}</TableCell>
               <TableCell>{product.sku}</TableCell>
               <TableCell>{product.name}</TableCell>
@@ -42,14 +40,6 @@ export function ProductsTable({ products }) {
           ))}
         </TableBody>
       </Table>
-
-      <div className="flex place-items-center mt-4 place-content-between">
-        <div className="flex gap-2">
-          <Button variant="outline"><ChevronUp /></Button>
-          <Button variant="outline"><ChevronDown /></Button>
-        </div>
-        <p>Page 1 of 10</p>
-      </div>
     </div>
   )
 }

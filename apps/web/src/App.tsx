@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
+import { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
 import axios from "axios"
 
 import { ProductsTable } from "./components/ProductsTable"
@@ -6,6 +6,8 @@ import { CreateProductForm } from "./components/CreateProductForm"
 import { RestockForm } from "./components/RestockForm"
 import { CheckoutForm } from "./components/CheckoutForm"
 import { Search } from "./components/Search"
+import { BackupDB } from "./components/BackupDB"
+import { Toaster } from "@workspace/ui/components/toast"
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -28,7 +30,10 @@ export function App() {
     getProducts()
   }, [getProducts])
 
-  console.log(products)
+  const searchedProducts = products.filter(p =>
+    p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const skus = [...new Set(products.map((product) => product.sku))] //TODO: create better variable name
 
@@ -44,11 +49,14 @@ export function App() {
         <div className="flex gap-2.5">
           <CreateProductForm onProductAdded={getProducts}/>
           <RestockForm productSKUs={skus} onRestock={getProducts}/>
-          <CheckoutForm productSKUs={skus} onCheckout={getProducts}/>
+          <CheckoutForm productSKUs={skus} onCheckout={getProducts} />
+          <BackupDB />
         </div>
       </div>
       <div className="my-4"></div>
-      <ProductsTable products={products} />
+      <ProductsTable products={searchedProducts} />
+
+      <Toaster />
     </div>
   )
 }

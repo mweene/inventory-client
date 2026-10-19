@@ -23,12 +23,18 @@ importers:
 
   apps/web:
     dependencies:
+      '@base-ui/react':
+        specifier: ^1.8.0
+        version: 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       axios:
         specifier: ^1.20.0
         version: 1.20.0(debug@4.4.3)
+      cn:
+        specifier: ^0.4.0
+        version: 0.4.0
       lucide-react:
         specifier: ^1.52.0
         version: 1.52.0(@types/react@19.3.0)(react@19.3.0)
