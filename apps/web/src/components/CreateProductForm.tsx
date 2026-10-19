@@ -63,6 +63,7 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    console.log(stock)
     const data = Object.fromEntries(new FormData(e.currentTarget))
 
     try {
@@ -93,7 +94,7 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger>
         <Button>Add new stock</Button>
       </SheetTrigger>
 

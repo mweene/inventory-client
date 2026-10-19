@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
 import axios from "axios"
 
 import { ProductsTable } from "./components/ProductsTable"
 import { CreateProductForm } from "./components/CreateProductForm"
 import { RestockForm } from "./components/RestockForm"
 import { CheckoutForm } from "./components/CheckoutForm"
-import { FieldGroup, FieldLabel } from "@workspace/ui/components/field"
-import { Input } from "@workspace/ui/components/input"
+import { Search } from "./components/Search"
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -14,12 +13,13 @@ const api = axios.create({
 
 export function App() {
   const [products, setProducts] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
 
   const getProducts = useCallback(async () => {
     try {
       const response = await api.get("/api/dashboard")
       setProducts(response.data.data)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch products", err)
     }
   }, [])
@@ -28,15 +28,18 @@ export function App() {
     getProducts()
   }, [getProducts])
 
+  console.log(products)
+
   const skus = [...new Set(products.map((product) => product.sku))] //TODO: create better variable name
 
+  const handleSearchTerm = (e: FormEvent<InputEvent>) => {
+    setSearchTerm(e.target.value)
+    console.log(searchTerm)
+  }
   return (
     <div className="App p-6">
       <div className="flex place-items-center place-content-between gap-2.5">
-        <FieldGroup className="w-[30ch]">
-          <FieldLabel htmlFor="product"></FieldLabel>
-          <Input id="product" name="product" placeholder="search by name/sku"/>
-        </FieldGroup>
+        <Search value={searchTerm} onChange={handleSearchTerm}/>
 
         <div className="flex gap-2.5">
           <CreateProductForm onProductAdded={getProducts}/>
