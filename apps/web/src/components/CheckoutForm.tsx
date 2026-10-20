@@ -22,12 +22,12 @@ import {
   DialogFooter,
 } from "@workspace/ui/components/dialog"
 import { FieldSelect } from "./FieldSelect"
-import { ChevronDown, X } from "lucide-react"
+import { X } from "lucide-react"
 import axios from "axios"
 
-export function CheckoutForm({
-  productSKUs,
-  onCheckout
+export function CheckoutForm({ 
+  productSKUs, 
+  onCheckout 
 }: {
   productSKUs: string[]
   onCheckout: () => void | Promise<void>
@@ -101,12 +101,7 @@ export function CheckoutForm({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <div className="content">
-        <DialogTrigger render={
-          <Button onClick={() => setIsOpen(true)} variant="outline">
-            Checkout
-            <ChevronDown />
-          </Button>
-        } />
+        <DialogTrigger render={<Button onClick={() => setIsOpen(true)} variant="outline">Checkout</Button>} />
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Checkout (sales) Form</DialogTitle>
@@ -156,7 +151,7 @@ export function CheckoutForm({
 }
 
 const CheckoutTable = ({ data, onDeleteItem }) => {
-
+  
   return (
     <div>
       <Table className="mt-6 border">

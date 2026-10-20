@@ -1,5 +1,6 @@
 import React, { useState, type ChangeEvent } from "react"
 import axios from "axios"
+
 import { Button } from "@workspace/ui/components/button"
 import {
   Field,
@@ -18,7 +19,6 @@ import {
 } from "@workspace/ui/components/sheet"
 import { Input } from "@workspace/ui/components/input"
 import { FieldSelect } from "./FieldSelect"
-import { ChevronDown } from "lucide-react"
 
 type ProductWithStock = {
   sku: string
@@ -82,10 +82,7 @@ export function RestockForm({ productSKUs, onRestock }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
-        <Button variant="outline">
-          Restock
-          <ChevronDown />
-        </Button>
+        <Button variant="outline">Restock</Button>
       </SheetTrigger>
 
       <SheetContent>
@@ -98,9 +95,9 @@ export function RestockForm({ productSKUs, onRestock }) {
           <FieldGroup>
             <FieldSet>
               <FieldGroup>
-                <FieldSelect
+                <FieldSelect 
                   onValueChange={handleValueChange}
-                  skus={productSKUs}
+                  skus={productSKUs} 
                 />
 
                 <Field>

@@ -8,7 +8,7 @@ export function Search({value, onChange}) {
         <Input
           id="search"
           name="search"
-          placeholder="Search product by sku/name"
+          placeholder="Search by product sku/name"
           value={value}
           onChange={onChange}
         />
