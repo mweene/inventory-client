@@ -163,7 +163,6 @@ const CheckoutTable = ({ data, onDeleteItem }) => {
         <TableHeader className="uppercase">
           <TableRow>
             <TableHead>sku</TableHead>
-            <TableHead>name</TableHead>
             <TableHead>quantity</TableHead>
             <TableHead>price</TableHead>
             <TableHead>action</TableHead>
@@ -174,7 +173,6 @@ const CheckoutTable = ({ data, onDeleteItem }) => {
           {data.map((item, index) => ( //TODO: Change to actual item id
             <TableRow key={index} className="">
               <TableCell>{item.sku}</TableCell>
-              <TableCell>{item.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>{item.price}</TableCell>
               <TableCell>
@@ -187,7 +185,7 @@ const CheckoutTable = ({ data, onDeleteItem }) => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={4}>Total</TableCell>
+            <TableCell colSpan={3}>Total</TableCell>
             <TableCell className="text-right">
               K
               {data

@@ -11,7 +11,7 @@ export function ProductsTable({ products }) {
   return (
     <div>
       <Table className="border">
-        <TableHeader role="rowgroup" className="block [scrollbar-gutter-stable] overflow-y-hidden [&_tr]:table [&_tr]:w-full [&_tr]:table-fixed">
+        <TableHeader role="rowgroup" className="">
           <TableRow role="row" className="uppercase">
             <TableHead>id</TableHead>
             <TableHead>sku</TableHead>
@@ -24,7 +24,7 @@ export function ProductsTable({ products }) {
             <TableHead>created at</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody role="rowgroup" className="block max-h-[470px] overflow-y-auto [scrollbar-gutter-stable] [&_tr]:table [&_tr]:w-full [&_tr]:table-fixed">
+        <TableBody role="rowgroup" className="max-h-[470px] overflow-y-auto [scrollbar-gutter-stable]">
           {products.map((product) => (
             <TableRow role="row" key={product.id}>
               <TableCell>{product.id}</TableCell>

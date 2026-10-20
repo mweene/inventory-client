@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
 import axios from "axios"
-
 import { ProductsTable } from "./components/ProductsTable"
 import { CreateProductForm } from "./components/CreateProductForm"
 import { RestockForm } from "./components/RestockForm"
@@ -8,6 +7,7 @@ import { CheckoutForm } from "./components/CheckoutForm"
 import { Search } from "./components/Search"
 import { BackupDB } from "./components/BackupDB"
 import { Toaster } from "@workspace/ui/components/toast"
+import { Navbar } from "./components/Navbar"
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -42,21 +42,25 @@ export function App() {
     console.log(searchTerm)
   }
   return (
-    <div className="App p-6">
-      <div className="flex place-items-center place-content-between gap-2.5">
-        <Search value={searchTerm} onChange={handleSearchTerm}/>
+    <div className="App p-4 grid grid-cols-12">
+      <Navbar className="col-span-1"/>
 
-        <div className="flex gap-2.5">
-          <CreateProductForm onProductAdded={getProducts}/>
-          <RestockForm productSKUs={skus} onRestock={getProducts}/>
-          <CheckoutForm productSKUs={skus} onCheckout={getProducts} />
-          <BackupDB />
+      <div className="col-span-11">
+        <div className="flex place-items-center place-content-between gap-2.5">
+          <Search value={searchTerm} onChange={handleSearchTerm}/>
+
+          <div className="flex gap-2.5">
+            <CreateProductForm onProductAdded={getProducts}/>
+            <RestockForm productSKUs={skus} onRestock={getProducts}/>
+            <CheckoutForm productSKUs={skus} onCheckout={getProducts} />
+            <BackupDB />
+          </div>
         </div>
-      </div>
-      <div className="my-4"></div>
-      <ProductsTable products={searchedProducts} />
+        <div className="my-4"></div>
+        <ProductsTable products={searchedProducts} />
 
-      <Toaster />
+        <Toaster />
+      </div>
     </div>
   )
 }
