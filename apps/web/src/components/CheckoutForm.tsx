@@ -164,9 +164,9 @@ export function CheckoutForm({
           </form>
 
           {productsList.length > 0 && (
-            <div>
-              <Table className="mt-6 border">
-                <TableHeader className="uppercase">
+            <div className="max-h-60 overflow-y-auto mt-4 border rounded-lg">
+              <Table>
+                <TableHeader className="uppercase sticky top-0 bg-background z-10">
                   <TableRow>
                     <TableHead>SKU</TableHead>
                     <TableHead>Qty</TableHead>
@@ -191,7 +191,7 @@ export function CheckoutForm({
                     </TableRow>
                   ))}
                 </TableBody>
-                <TableFooter>
+                <TableFooter className="sticky bottom-0 bg-background z-10">
                   <TableRow>
                     <TableCell colSpan={3}>Grand Total</TableCell>
                     <TableCell colSpan={2} className="text-right font-bold text-primary">
