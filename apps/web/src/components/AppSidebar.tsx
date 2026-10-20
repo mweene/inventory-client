@@ -59,11 +59,9 @@ export function AppSidebar() {
                 const isActive = location.pathname === item.url
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        <span>{item.title}</span>
-                      </Link>
+                    <SidebarMenuButton isActive={isActive} tooltip={item.title} render={<Link to={item.url} />}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )

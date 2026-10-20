@@ -30,10 +30,7 @@ interface CheckoutItem {
   quantity: number
   price: number
 }
-
-const api = axios.create({
-  baseURL: "http://localhost:3000",
-})
+import { api } from "../utils/api"
 
 export function CheckoutForm({ 
   productSKUs, 

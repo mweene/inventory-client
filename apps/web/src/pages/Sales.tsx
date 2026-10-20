@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react"
-import axios from "axios"
 import { useOutletContext } from "react-router-dom"
 import {
   Table,
@@ -25,10 +24,7 @@ interface Sale {
   created_at: string
   items: SaleItem[]
 }
-
-const api = axios.create({
-  baseURL: "http://localhost:3000",
-})
+import { api } from "../utils/api"
 
 export function Sales() {
   const { searchTerm = "" } = useOutletContext<{ searchTerm?: string }>()

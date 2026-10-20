@@ -1,5 +1,5 @@
 import React, { useState, type ChangeEvent } from "react"
-import axios from "axios"
+import { api } from "../utils/api"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -58,10 +58,10 @@ export function RestockForm({ productSKUs, onRestock }) {
     })
   }
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:3000/api/inventory/restock', data)
+      await api.post('/api/inventory/restock', data)
       setOpen(false)
 
       setData({

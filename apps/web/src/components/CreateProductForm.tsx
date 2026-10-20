@@ -1,5 +1,5 @@
 import React, { useState, type ChangeEvent } from "react"
-import axios from "axios"
+import { api } from "../utils/api"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -67,8 +67,8 @@ export function CreateProductForm({ onProductAdded }: CreateProductProps) {
     const data = Object.fromEntries(new FormData(e.currentTarget))
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/productWithStock",
+      const response = await api.post(
+        "/api/productWithStock",
         data
       )
 

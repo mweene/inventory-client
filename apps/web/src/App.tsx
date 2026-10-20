@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
-import axios from "axios"
+import { useCallback, useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
-import { ProductsTable } from "./components/ProductsTable"
 import { CreateProductForm } from "./components/CreateProductForm"
 import { RestockForm } from "./components/RestockForm"
 import { CheckoutForm } from "./components/CheckoutForm"
@@ -10,10 +8,7 @@ import { BackupDB } from "./components/BackupDB"
 import { Toaster } from "@workspace/ui/components/toast"
 import { AppSidebar } from "./components/AppSidebar"
 import { SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar"
-
-const api = axios.create({
-  baseURL: "http://localhost:3000",
-})
+import { api } from "./utils/api"
 
 export function App() {
   const [products, setProducts] = useState<any[]>([])

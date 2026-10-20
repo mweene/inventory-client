@@ -1,5 +1,6 @@
 import { useState } from "react"
 import axios from "axios"
+import { api } from "../utils/api"
 import { Button } from "@workspace/ui/components/button"
 import { toast } from "@workspace/ui/components/toast"
 import { DatabaseArrowDown, DatabaseBackupIcon } from "lucide-react"
@@ -32,7 +33,7 @@ export function BackupDB() {
   const handleBackup = async () => {
     setBusy(true)
     try {
-      const { data } = await axios.post('http://localhost:3000/api/backup')
+      const { data } = await api.post('/api/backup')
       console.log(`Saved: ${data}`)
       showToast()
     } catch (err: unknown) {

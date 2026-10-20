@@ -11,4 +11,8 @@ export default defineConfig({
       "@": resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    outDir: resolve(import.meta.dirname, "../../../backend/src/public"),
+    emptyOutDir: true,
+  },
 })
