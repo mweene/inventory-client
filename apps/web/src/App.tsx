@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent, type InputEvent } from "react"
 import axios from "axios"
+import { Outlet } from "react-router-dom"
 import { ProductsTable } from "./components/ProductsTable"
 import { CreateProductForm } from "./components/CreateProductForm"
 import { RestockForm } from "./components/RestockForm"
@@ -7,14 +8,15 @@ import { CheckoutForm } from "./components/CheckoutForm"
 import { Search } from "./components/Search"
 import { BackupDB } from "./components/BackupDB"
 import { Toaster } from "@workspace/ui/components/toast"
-import { Navbar } from "./components/Navbar"
+import { AppSidebar } from "./components/AppSidebar"
+import { SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar"
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
 })
 
 export function App() {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
 
   const getProducts = useCallback(async () => {
@@ -35,32 +37,39 @@ export function App() {
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const skus = [...new Set(products.map((product) => product.sku))] //TODO: create better variable name
+  const skus = [...new Set(products.map((product) => product.sku))]
 
-  const handleSearchTerm = (e: FormEvent<InputEvent>) => {
+  const handleSearchTerm = (e: any) => {
     setSearchTerm(e.target.value)
-    console.log(searchTerm)
   }
+
   return (
-    <div className="App p-4 grid grid-cols-12">
-      <Navbar className="col-span-1"/>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1 p-6 overflow-y-auto">
+          <div className="flex items-center gap-4 mb-4">
+            <SidebarTrigger />
+            <div className="flex-1">
+              <div className="flex place-items-center place-content-between gap-2.5">
+                <Search value={searchTerm} onChange={handleSearchTerm}/>
 
-      <div className="col-span-11">
-        <div className="flex place-items-center place-content-between gap-2.5">
-          <Search value={searchTerm} onChange={handleSearchTerm}/>
-
-          <div className="flex gap-2.5">
-            <CreateProductForm onProductAdded={getProducts}/>
-            <RestockForm productSKUs={skus} onRestock={getProducts}/>
-            <CheckoutForm productSKUs={skus} onCheckout={getProducts} />
-            <BackupDB />
+                <div className="flex gap-2.5">
+                  <CreateProductForm onProductAdded={getProducts}/>
+                  <RestockForm productSKUs={skus} onRestock={getProducts}/>
+                  <CheckoutForm productSKUs={skus} onCheckout={getProducts} />
+                  <BackupDB />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="my-4"></div>
-        <ProductsTable products={searchedProducts} />
 
-        <Toaster />
+          <div className="my-4"></div>
+          <Outlet context={{ searchedProducts, getProducts, skus }} />
+
+          <Toaster />
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }

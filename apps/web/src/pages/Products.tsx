@@ -1,7 +1,12 @@
+import { useOutletContext } from "react-router-dom"
+import { ProductsTable } from "../components/ProductsTable"
+
 export function Products() {
+  const { searchedProducts } = useOutletContext<{ searchedProducts: any[] }>()
+
   return (
     <div>
-      <h1>Products</h1>
+      <ProductsTable products={searchedProducts} />
     </div>
   )
 }
