@@ -33,11 +33,11 @@ export function ProductsTable({ products }) {
               <TableCell>{product.sku}</TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.category}</TableCell>
-              <TableCell>K{product.price}</TableCell>
-              <TableCell>K{product.unit_cost}</TableCell>
+              <TableCell>K{Number(product.price).toFixed(2)}</TableCell>
+              <TableCell>K{Number(product.unit_cost).toFixed(2)}</TableCell>
               <TableCell>{product.qty_received}</TableCell>
               <TableCell>{product.qty_remaining}</TableCell>
-              <TableCell>{product.created_at.split(" ")[0]}</TableCell>
+              <TableCell>{product.created_at ? product.created_at.split(" ")[0] : "N/A"}</TableCell>
             </TableRow>
           ))}
         </TableBody>
