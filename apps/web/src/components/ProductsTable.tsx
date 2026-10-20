@@ -13,13 +13,8 @@ export function ProductsTable({ products }) {
   return (
     <div>
       <Table className="border">
-<<<<<<< HEAD
         <TableHeader role="rowgroup" className="">
           <TableRow role="row" className="uppercase">
-=======
-        <TableHeader>
-          <TableRow className="uppercase">
->>>>>>> parent of f7c4b92 (add database backup component)
             <TableHead>id</TableHead>
             <TableHead>sku</TableHead>
             <TableHead>name</TableHead>
@@ -31,11 +26,7 @@ export function ProductsTable({ products }) {
             <TableHead>created at</TableHead>
           </TableRow>
         </TableHeader>
-<<<<<<< HEAD
         <TableBody role="rowgroup" className="max-h-[470px] overflow-y-auto [scrollbar-gutter-stable]">
-=======
-        <TableBody>
->>>>>>> parent of f7c4b92 (add database backup component)
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>{product.id}</TableCell>
