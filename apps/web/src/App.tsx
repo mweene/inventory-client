@@ -65,7 +65,7 @@ export function App() {
           </div>
 
           <div className="my-4"></div>
-          <Outlet context={{ searchedProducts, getProducts, skus }} />
+          <Outlet context={{ searchedProducts, getProducts, skus, searchTerm }} />
 
           <Toaster />
         </main>

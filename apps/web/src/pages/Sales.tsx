@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import axios from "axios"
+import { useOutletContext } from "react-router-dom"
 import {
   Table,
   TableBody,
@@ -30,6 +31,7 @@ const api = axios.create({
 })
 
 export function Sales() {
+  const { searchTerm = "" } = useOutletContext<{ searchTerm?: string }>()
   const [sales, setSales] = useState<Sale[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -51,6 +53,21 @@ export function Sales() {
     fetchSales()
   }, [fetchSales])
 
+  const filteredSales = sales.filter((sale) => {
+    const term = searchTerm.toLowerCase()
+    if (!term) return true
+
+    // Match sale ID
+    if (sale.id.toString().includes(term)) return true
+
+    // Match item SKU or product name
+    return sale.items.some(
+      (item) =>
+        item.sku.toLowerCase().includes(term) ||
+        item.product_name.toLowerCase().includes(term)
+    )
+  })
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -65,15 +82,15 @@ export function Sales() {
       {loading && <p className="text-sm text-muted-foreground">Loading sales...</p>}
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      {!loading && !error && sales.length === 0 && (
+      {!loading && !error && filteredSales.length === 0 && (
         <div className="text-center py-12 border rounded-lg bg-card text-card-foreground">
-          <p className="text-muted-foreground">No sales recorded yet.</p>
+          <p className="text-muted-foreground">No sales found matching your search.</p>
         </div>
       )}
 
-      {!loading && !error && sales.length > 0 && (
+      {!loading && !error && filteredSales.length > 0 && (
         <div className="space-y-6">
-          {sales.map((sale) => (
+          {filteredSales.map((sale) => (
             <div key={sale.id} className="border rounded-xl p-5 bg-card shadow-sm">
               <div className="flex items-center justify-between pb-3 mb-3 border-b">
                 <div>
