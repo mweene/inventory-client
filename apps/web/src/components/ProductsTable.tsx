@@ -54,7 +54,9 @@ export function ProductsTable({ products }) {
                   </TableCell>
                   <TableCell>{product.id}</TableCell>
                   <TableCell className="font-mono">{product.sku}</TableCell>
-                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell className="font-medium max-w-[180px] truncate" title={product.name}>
+                    {product.name}
+                  </TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>K{Number(product.price).toFixed(2)}</TableCell>
                   <TableCell>
